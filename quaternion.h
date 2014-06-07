@@ -49,6 +49,22 @@ struct Quaternion
 		
 		return Vector3(topRow.Dot(v), midRow.Dot(v), botRow.Dot(v));
 	}
+	
+	//Order is important. If we rotate v by the result quaternion, we'd first rotate v by rhs and then by this
+	Quaternion Concat(const Quaternion & rhs) const
+	{
+		Quaternion q;
+		q.w = w * rhs.w - u.Dot(rhs.u);
+		q.u = u.Cross(rhs.u) + w*rhs.u + rhs.w*u;
+		return q;	
+	}
+	
+	Quaternion operator*(const Quaternion & rhs) const
+	{
+		return Concat(rhs);
+	}
+	
+	static Quaternion Zero;
 };
 
 inline std::ostream & operator<<(std::ostream & o, const Quaternion & rhs)

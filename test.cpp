@@ -1,28 +1,21 @@
 #include <iostream>
 #include "vector3.h"
 #include "quaternion.h"
+#include "transform.h"
 
 int main()
 {
 	Quaternion q(Vector3(0.f,0.f,1.f), 3.14159/2);
-	Vector3 p1(1.f,0.f,0.f);
-	Vector3 p2(0.f,1.f,0.f);
-	Vector3 p3(0.3,0.3, 0.f);
+	Quaternion q2(Vector3(0.f,0.f,1.f), 3.14159/2);
 
-	std::cout << q << std::endl;
+	Transform t1(Vector3(1,1,1), q, Vector3(2,2,2));
+	Transform t2(Vector3(1,1,1), q, Vector3(.5,.5,.5));
+	Transform t3 = t2*t1;
+
+	Vector3 p(1,1,1);
 	
-	std::cout << p1 << std::endl;
+	Vector3 p2 = t3.TransformPosition(p);
 	std::cout << p2 << std::endl;
-	std::cout << p3 << std::endl;
-	
-	p1 = q.Rotate(p1);
-	p2 = q.Rotate(p2);
-	p3 = q.Rotate(p3);
-
-	std::cout << p1 << std::endl;
-	std::cout << p2 << std::endl;
-	std::cout << p3 << std::endl;
-
 	
 	return 0;
 }

@@ -3,6 +3,7 @@
 
 #include "math.h"
 #include "vector3.h"
+#include "matrix33.h"
 
 struct Quaternion
 {
@@ -30,9 +31,9 @@ struct Quaternion
 		}
 	}
 	
-	Vector3 Rotate(const Vector3 & v) const
+	Matrix33 toMatrix33() const
 	{
-		//using formula for rotation from http://www.mathworks.com/help/aeroblks/quaternionrotation.html
+		//using formula for rotation from http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
 		const float twoX2 = u.x*u.x * 2.f;
 		const float twoY2 = u.y*u.y * 2.f;
 		const float twoZ2 = u.z*u.z * 2.f;
@@ -43,11 +44,17 @@ struct Quaternion
 		const float yz = u.y*u.z;
 		const float wx = w*u.x;
 		
-		const Vector3 topRow(1.f-twoY2 - twoZ2, 2.f*(xy-wz), 2.f*(xz+wy));
-		const Vector3 midRow(2.f*(xy+wz), (1.f-twoX2-twoZ2), 2.f*(yz-wx));
-		const Vector3 botRow(2.f*(xz-wy), 2.f*(yz+wx), 1.f-twoX2-twoY2);
-		
-		return Vector3(topRow.Dot(v), midRow.Dot(v), botRow.Dot(v));
+		Matrix33 mt33(1.f-twoY2 - twoZ2, 2.f*(xy-wz), 2.f*(xz+wy),
+					  2.f*(xy+wz), (1.f-twoX2-twoZ2), 2.f*(yz-wx),
+					  2.f*(xz-wy), 2.f*(yz+wx), 1.f-twoX2-twoY2);
+					  
+	  return mt33;
+	}
+	
+	Vector3 Rotate(const Vector3 & v) const
+	{
+		Matrix33 mt33 = toMatrix33();
+		return mt33*v;
 	}
 	
 	//Order is important. If we rotate v by the result quaternion, we'd first rotate v by rhs and then by this

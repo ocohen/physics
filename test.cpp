@@ -10,7 +10,7 @@ int main()
 
 	Transform t1(Vector3(1,1,1), q, Vector3(2,2,2));
 	Transform t2(Vector3(1,1,1), q, Vector3(.5,.5,.5));
-	Transform t3 = t2*t1;
+	Transform t3 = t1*t2;
 
 	Vector3 p(1,1,1);
 	

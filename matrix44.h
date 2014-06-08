@@ -3,6 +3,7 @@
 
 #include "transform.h"
 #include "vector4.h"
+#include <iostream>
 
 struct Matrix44
 {
@@ -53,14 +54,13 @@ struct Matrix44
 		Matrix33 scaleMt = Matrix33::Identity;
 		{
 			scaleMt[0] = tr.scale.x;
-			scaleMt[5] = tr.scale.y;
-			scaleMt[10] = tr.scale.z;			
+			scaleMt[4] = tr.scale.y;
+			scaleMt[8] = tr.scale.z;			
 		}
-		
 		Matrix33 rotMt = tr.rot.toMatrix33();
-		
 		Matrix33 scaleRotMt = rotMt * scaleMt;
 		Matrix44 finalMt = FromMatrix33(scaleRotMt);
+
 		finalMt[12] = tr.pos.x;
 		finalMt[13] = tr.pos.y;
 		finalMt[14] = tr.pos.z;
@@ -126,5 +126,13 @@ struct Matrix44
 	
 	static Matrix44 Identity;
 };
+
+inline std::ostream & operator<<(std::ostream & o, const Matrix44 & rhs)
+{
+	Vector4 top, mid, mid2, bottom;
+	rhs.getRows(top,mid,mid2,bottom);
+	
+	return o << "[ " << top << std::endl << mid << std::endl << " " << mid2 << std::endl << " " <<  bottom << " ]" << std::endl;
+}
 
 #endif

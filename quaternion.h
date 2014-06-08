@@ -1,6 +1,7 @@
 #ifndef OC_QUATERNION_H
 #define OC_QUATERNION_H
 
+#include <iosfwd>
 #include "math.h"
 #include "vector3.h"
 #include "matrix33.h"
@@ -74,9 +75,6 @@ struct Quaternion
 	static Quaternion Zero;
 };
 
-inline std::ostream & operator<<(std::ostream & o, const Quaternion & rhs)
-{
-	return o << "[" << rhs.u << " + " << rhs.w << "]";
-}
+std::ostream & operator<<(std::ostream & o, const Quaternion & rhs);
 
 #endif

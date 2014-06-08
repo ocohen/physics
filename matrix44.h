@@ -1,9 +1,9 @@
 #ifndef OC_MATRIX44_H
 #define OC_MATRIX44_H
 
+#include <iosfwd>
 #include "transform.h"
 #include "vector4.h"
-#include <iostream>
 
 struct Matrix44
 {
@@ -127,12 +127,6 @@ struct Matrix44
 	static Matrix44 Identity;
 };
 
-inline std::ostream & operator<<(std::ostream & o, const Matrix44 & rhs)
-{
-	Vector4 top, mid, mid2, bottom;
-	rhs.getRows(top,mid,mid2,bottom);
-	
-	return o << "[ " << top << std::endl << mid << std::endl << " " << mid2 << std::endl << " " <<  bottom << " ]" << std::endl;
-}
+std::ostream & operator<<(std::ostream & o, const Matrix44 & rhs);
 
 #endif

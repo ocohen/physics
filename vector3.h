@@ -1,7 +1,7 @@
 #ifndef OC_VECTOR3_H
 #define OC_VECTOR3_H
 
-#include <iostream>
+#include <iosfwd>
 #include "math.h"
 
 struct Vector3
@@ -129,9 +129,6 @@ inline Vector3 operator*(float k, const Vector3 & rhs)
 	return rhs.operator*(k);
 }
 
-inline std::ostream & operator<<(std::ostream & o, const Vector3 & rhs)
-{
-	return o << "(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";
-}
+std::ostream & operator<<(std::ostream & o, const Vector3 & rhs);
 
 #endif

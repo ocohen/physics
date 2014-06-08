@@ -22,18 +22,45 @@ struct Matrix33
 		f[8] = f8;
 	}
 	
-	void getRows(Vector3 & top, Vector3 & mid, Vector3 & bottom) const
+	static Matrix33 FromRows(const Vector3 & top, const Vector3 & mid, const Vector3 & bot)
+	{
+		return Matrix33(top.x, top.y, top.z,
+						mid.x, mid.y, mid.z,
+						bot.x, bot.y, bot.z);
+	}
+	
+	static Matrix33 FromColumns(const Vector3 & left, const Vector3 & mid, const Vector3 & right)
+	{
+		return Matrix33(left.x, mid.x, right.x,
+						left.y, mid.y, right.y,
+						left.z, mid.z, right.z);
+	}
+	
+	void GetRows(Vector3 & top, Vector3 & mid, Vector3 & bottom) const
 	{
 		top = Vector3(f[0], f[1], f[2]);
 		mid = Vector3(f[3], f[4], f[5]);
 		bottom = Vector3(f[6], f[7], f[8]);
 	}
 	
-	void getColumns(Vector3 & left, Vector3 & mid, Vector3 & right) const
+	void GetColumns(Vector3 & left, Vector3 & mid, Vector3 & right) const
 	{
 		left = Vector3(f[0], f[3], f[6]);
 		mid = Vector3(f[1], f[4], f[7]);
 		right = Vector3(f[2], f[5], f[8]);
+	}
+	
+	float Determinant() const
+	{
+		//assume matrix is laid out as:
+		//|u1 u2 u3|
+		//|v1 v2 v3|
+		//|w1 w2 w3|
+		//Then determinant = u.(v x w)
+		
+		Vector3 u,v,w;
+		GetRows(u,v,w);
+		return u.Dot(v.Cross(w));		
 	}
 	
 	Matrix33(const Matrix33 & rhs)
@@ -44,7 +71,7 @@ struct Matrix33
 	Vector3 Multiply(const Vector3 & rhs) const
 	{
 		Vector3 topRow, midRow, botRow;
-		getRows(topRow, midRow, botRow);
+		GetRows(topRow, midRow, botRow);
 		return Vector3(topRow.Dot(rhs), midRow.Dot(rhs), botRow.Dot(rhs));
 	}
 	
@@ -60,8 +87,8 @@ struct Matrix33
 		Vector3 top,mid,bottom;
 		Vector3 left,mid2,right;
 		
-		getRows(top,mid,bottom);
-		rhs.getColumns(left,mid2,right);
+		GetRows(top,mid,bottom);
+		rhs.GetColumns(left,mid2,right);
 		
 		mt[0] = top.Dot(left);
 		mt[1] = top.Dot(mid2);
@@ -90,5 +117,7 @@ struct Matrix33
 	
 	static Matrix33 Identity;
 };
+
+std::ostream & operator<<(std::ostream & o, const Matrix33 & rhs);
 
 #endif

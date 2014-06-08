@@ -46,6 +46,29 @@ struct Vector3
 		return sqrt(Length2());
 	}
 	
+	const Vector3 & SafeNormalize()
+	{
+		float l = Length();
+		if(!::IsZero(l))
+		{
+			x /= l;
+			y /= l;
+			z /= l;
+		}
+		
+		return *this;
+	}
+	
+	const Vector3 & Normalize()
+	{
+		float l = Length();
+		x /= l;
+		y /= l;
+		z /= l;
+		
+		return *this;
+	}
+	
 	Vector3 operator*(const Vector3 & rhs) const
 	{
 		return Vector3(x*rhs.x, y*rhs.y, z*rhs.z);

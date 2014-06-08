@@ -1,5 +1,6 @@
 #include <iostream>
 #include "vector3.h"
+#include "matrix33.h"
 
 void Barycentric(const Vector3 & A, const Vector3 & B, const Vector3 & C, const Vector3 & P, float & u, float & v, float & w)
 {
@@ -51,6 +52,9 @@ int triangleTest()
 	
 	Vector3 p(1.f, 0.5f, 0.f);
 	
+	//must check p is coplanar first
+
+	
 	float u,v,w;
 	Barycentric(a,b,c,p,u,v,w);
 	
@@ -65,6 +69,61 @@ int triangleTest()
 	}
 
 	std::cout << "outside triangle" << std::endl;
+	
+	return 0;
+}
+
+int orient2d()
+{
+	//determine if p is to the left or right of ab
+	Vector3 a(1,0,1);
+	Vector3 b(0,1,1);
+	Vector3 p(0.5,0.4,1);
+	
+	Matrix33 mt = Matrix33::FromRows(a,b,p);
+	bool apLeft = mt.Determinant() >= 0;
+	
+	std::cout << "p to the left:" << apLeft << std::endl;
+	
+	return 0;
+}
+
+
+int triangleArea()
+{
+	Vector3 a(1,0,0);
+	Vector3 b(1,1,0);
+	Vector3 c(0,0,0);
+	
+	Vector3 ca = a-c;
+	Vector3 cb = b-c;
+	Vector3 n = ca.Cross(cb).Normalize();
+	
+	Matrix33 mt = Matrix33::FromRows(ca,cb,n);
+	std::cout << mt << std::endl;
+	float area = mt.Determinant() / 2.f;
+	
+	std::cout << "Area: " << area << std::endl;
+	
+	return 0;
+}
+
+int parallelepipedVolume()
+{
+	Vector3 a(1,0,0);
+	Vector3 b(0,1,0);
+	Vector3 c(0,0,0);
+	Vector3 d(0,0,1);
+	
+	Vector3 ca = a-c;
+	Vector3 cb = b-c;
+	Vector3 cd = d-c;
+	
+	Matrix33 mt = Matrix33::FromRows(ca,cb,cd);
+	std::cout << mt << std::endl;
+	float area = mt.Determinant();
+	
+	std::cout << "Volume: " << area << std::endl;
 	
 	return 0;
 }

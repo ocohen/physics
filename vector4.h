@@ -35,6 +35,31 @@ struct Vector4
 		return sqrt(Length2());
 	}
 	
+	const Vector4 SafeNormalize()
+	{
+		float l = Length();
+		if(!::IsZero(l))
+		{
+			x /= l;
+			y /= l;
+			z /= l;
+			w /= l;
+		}
+		
+		return *this;
+	}
+	
+	const Vector4 Normalize()
+	{
+		float l = Length();
+		x /= l;
+		y /= l;
+		z /= l;
+		w /= l;
+		
+		return *this;
+	}
+	
 	Vector4 operator*(const Vector4 & rhs) const
 	{
 		return Vector4(x*rhs.x, y*rhs.y, z*rhs.z, w*rhs.w);

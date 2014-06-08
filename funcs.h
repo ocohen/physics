@@ -2,5 +2,8 @@
 #define OC_FUNCS_H
 
 int triangleTest();
+int triangleArea();
+int parallelepipedVolume();
+int orient2d();
 
 #endif

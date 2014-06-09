@@ -12,8 +12,8 @@ int main(int argc, const char ** argv)
 		return 1;
 	}
 	
-	const char * keys[] = {"triangle", "triarea", "parallelepipedvolume", "orient2d", "quadtest"};
-	func funcs[] = {triangleTest, triangleArea, parallelepipedVolume, orient2d, quadTest};
+	const char * keys[] = {"triangle", "triarea", "parallelepipedvolume", "orient2d", "quadtest", "convexhull"};
+	func funcs[] = {triangleTest, triangleArea, parallelepipedVolume, orient2d, quadTest, convexHull};
 	
 	for(int i=0; i<sizeof(keys) / sizeof(char *); ++i)
 	{

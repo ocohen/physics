@@ -6,6 +6,5 @@ int triangleArea();
 int parallelepipedVolume();
 int orient2d();
 int quadTest();
-int convexHull();
 
 #endif

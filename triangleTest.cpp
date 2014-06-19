@@ -81,7 +81,7 @@ TEST(TriangleTest, "triangletest");
 class RenderTriangleTest : public Test
 {
 public:
-    bool Tick(TinyRenderer::Renderer & renderer)
+    bool Tick(TinyRenderer::Renderer & renderer, float)
     {
     	Vector3 a(1,0,0);
     	Vector3 b(1,1,0);
@@ -98,7 +98,7 @@ public:
         Vector3 up(0,1,0);
         renderer.SetCameraLookAt(&pos.x, &Vector3::Zero.x, &up.x);
 	
-        return false;
+        return true;
     }
 };
 TEST(RenderTriangleTest, "drawtriangle");

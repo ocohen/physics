@@ -1,6 +1,6 @@
 #include <SDL.h>
 #include <iostream>
-#include <cstring>
+#include <ctime>
 #include "test.h"
 #include "tinyrenderer.h"
 
@@ -43,22 +43,40 @@ int main(int argc, const char ** argv)
     TinyRenderer::Renderer renderer(800,600);
 
     SDL_Event event;    
-    bool quit = false;
-    while (!quit)
+    bool run = true;
+    const double fps = 60.f;
+    const float delta = 1.f/fps;
+    double timeBank = delta;
+    clock_t start,end;
+    start = clock();
+    
+    while (run)
     {
         while(SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
             {
-                quit = 1;
+                run = false;
             }
         }
+                
+        end = clock();
+        float seconds = (float)(end - start) / CLOCKS_PER_SEC;
+        timeBank += seconds;
+        start = end;
         
-        renderer.Clear();
-        quit |= search->second->Tick(renderer);
-        renderer.Flush();
-        
-        SDL_RenderPresent(displayRenderer);
+        if(timeBank >= delta)
+        {
+            while(timeBank >= delta)
+            {
+                timeBank -= delta;
+                renderer.Clear();
+                run &= search->second->Tick(renderer, (float)delta);
+                renderer.Flush();
+            }
+            SDL_RenderPresent(displayRenderer);
+            SDL_Delay(delta);
+        }
     }
     
     SDL_Quit();

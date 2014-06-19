@@ -11,7 +11,7 @@ class Test
 {
 public:
     virtual bool Init(){return true;}
-    virtual bool Tick(TinyRenderer::Renderer & renderer){ return false; }
+    virtual bool Tick(TinyRenderer::Renderer & renderer, float seconds){ return true; }
     
     static TestMap * GetTestMap()
     {

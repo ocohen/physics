@@ -15,6 +15,7 @@ public:
     void SetBackground(const float * colour);
     void InitGL();
     void Clear();
+    void DrawPoint(const float * pt, const float * colour = 0, float thickness = 3.f);
     void DrawLine(const float * start, const float *end, const float * colour = 0, float thickness = 1.f);
     void DrawTriangle(const float * a, const float * b, const float * c, const float * colour = 0, float thickness = 1.f);
     void DrawSolidTriangle(const float * a, const float * b, const float * c, const float * colour);
@@ -77,17 +78,31 @@ inline void Renderer::Clear()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
+inline void SetColour(const float * colour)
+{
+    if(colour)
+    {
+        glColor3f(colour[0], colour[1], colour[2]);
+    }else
+    {
+        glColor3f(1.f, 1.f, 1.f);
+    }
+}
+
+inline void Renderer::DrawPoint(const float * pt, const float * colour, float thickness)
+{
+    SetColour(colour);   
+    glPointSize(thickness);
+    glBegin(GL_POINTS);
+    glVertex3f(pt[0], pt[1], pt[2]);
+    glEnd();
+    
+}
+
 inline void Renderer::DrawLine(const float * start, const float * end, const float * colour, float thickness)
 {
     glLineWidth(thickness);
-    if(colour)
-    {
-           glColor3f(colour[0], colour[1], colour[2]);
-    }else
-    {
-           glColor3f(1.f,1.f,1.f);
-    }
-    
+    SetColour(colour);
     glBegin(GL_LINES);
     glVertex3f(start[0], start[1], start[2]);
     glVertex3f(end[0], end[1], end[2]);
@@ -103,14 +118,7 @@ inline void Renderer::DrawTriangle(const float * a, const float * b, const float
 
 inline void Renderer::DrawSolidTriangle(const float * a, const float * b, const float * c, const float * colour)
 {
-    if(colour)
-    {
-           glColor3f(colour[0], colour[1], colour[2]);
-    }else
-    {
-           glColor3f(1.f,1.f,1.f);
-    }
-    
+    SetColour(colour);
     glBegin(GL_TRIANGLES);
     glVertex3f(a[0], a[1], a[2]);
     glVertex3f(b[0], b[1], b[2]);

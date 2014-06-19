@@ -1,6 +1,7 @@
 #include <iostream>
 #include "vector3.h"
 #include "matrix33.h"
+#include "test.h"
 
 void Barycentric(const Vector3 & A, const Vector3 & B, const Vector3 & C, const Vector3 & P, float & u, float & v, float & w)
 {
@@ -44,86 +45,128 @@ void Barycentric(const Vector3 & A, const Vector3 & B, const Vector3 & C, const 
 	u = 1-v-w;
 }
 
-int triangleTest()
+class TriangleTest : public Test
 {
-	Vector3 a(1,0,0);
-	Vector3 b(1,1,0);
-	Vector3 c(0,0,0);
+public:
+    bool Init()
+    {
+    	Vector3 a(1,0,0);
+    	Vector3 b(1,1,0);
+    	Vector3 c(0,0,0);
 	
-	Vector3 p(1.f, 0.5f, 0.f);
+    	Vector3 p(1.f, 0.5f, 0.f);
 	
-	//must check p is coplanar first
+    	//must check p is coplanar first
 
 	
-	float u,v,w;
-	Barycentric(a,b,c,p,u,v,w);
+    	float u,v,w;
+    	Barycentric(a,b,c,p,u,v,w);
 	
-	if(InRange(v,0.f,1.f) && InRange(w,0.f,1.f) && v+w <= 1)	//can remove extra check since u=1-v-w
-	{
-		//need to make sure point is actually on triangle plane
-		if((p - a*u - b*v - c*w).IsZero())
-		{
-			std::cout << "in triangle" << std::endl;	
-			return 0;
-		}
-	}
+    	if(InRange(v,0.f,1.f) && InRange(w,0.f,1.f) && v+w <= 1)	//can remove extra check since u=1-v-w
+    	{
+    		//need to make sure point is actually on triangle plane
+    		if((p - a*u - b*v - c*w).IsZero())
+    		{
+    			std::cout << "in triangle" << std::endl;	
+    			return false;
+    		}
+    	}
 
-	std::cout << "outside triangle" << std::endl;
-	
-	return 0;
-}
+    	std::cout << "outside triangle" << std::endl;
+        return false;
+    }
+};
+TEST(TriangleTest, "triangletest");
 
-int orient2d()
+class RenderTriangleTest : public Test
 {
-	//determine if p is to the left or right of ab
-	Vector3 a(1,0,1);
-	Vector3 b(0,1,1);
-	Vector3 p(0.5,0.4,1);
+public:
+    bool Tick(TinyRenderer::Renderer & renderer)
+    {
+    	Vector3 a(1,0,0);
+    	Vector3 b(1,1,0);
+    	Vector3 c(0,0,0);
+	    
+        float red[] = {1,0,0};
+    
+        renderer.DrawTriangle(&a.x, &b.x, &c.x);
+        renderer.DrawPoint(&a.x, red);
+        renderer.DrawPoint(&b.x, red);
+        renderer.DrawPoint(&c.x, red);
+        
+        Vector3 pos(0,0,3);
+        Vector3 up(0,1,0);
+        renderer.SetCameraLookAt(&pos.x, &Vector3::Zero.x, &up.x);
 	
-	Matrix33 mt = Matrix33::FromRows(a,b,p);
-	bool apLeft = mt.Determinant() >= 0;
-	
-	std::cout << "p to the left:" << apLeft << std::endl;
-	
-	return 0;
-}
+        return false;
+    }
+};
+TEST(RenderTriangleTest, "drawtriangle");
 
-
-int triangleArea()
+class Orient2d : public Test
 {
-	Vector3 a(1,0,0);
-	Vector3 b(1,1,0);
-	Vector3 c(0,0,0);
+    bool Init()
+    {
+    	//determine if p is to the left or right of ab
+    	Vector3 a(1,0,1);
+    	Vector3 b(0,1,1);
+    	Vector3 p(0.5,0.4,1);
 	
-	Vector3 ca = a-c;
-	Vector3 cb = b-c;
-	Vector3 n = ca.Cross(cb).Normalize();
+    	Matrix33 mt = Matrix33::FromRows(a,b,p);
+    	bool apLeft = mt.Determinant() >= 0;
 	
-	Matrix33 mt = Matrix33::FromRows(ca,cb,n);
-	std::cout << mt << std::endl;
-	float area = mt.Determinant() / 2.f;
+    	std::cout << "p to the left:" << apLeft << std::endl;
 	
-	std::cout << "Area: " << area << std::endl;
-	
-	return 0;
-}
+    	return false;
+    }
+};
+TEST(Orient2d, "orient2d");
 
-int parallelepipedVolume()
+
+class TriangleArea : public Test
 {
-	Vector3 a(1,0,0);
-	Vector3 b(0,1,0);
-	Vector3 c(0,0,0);
-	Vector3 d(0,0,1);
+    bool Init()
+    {
+    	Vector3 a(1,0,0);
+    	Vector3 b(1,1,0);
+    	Vector3 c(0,0,0);
 	
-	Vector3 ca = a-c;
-	Vector3 cb = b-c;
-	Vector3 cd = d-c;
+    	Vector3 ca = a-c;
+    	Vector3 cb = b-c;
+    	Vector3 n = ca.Cross(cb).Normalize();
 	
-	Matrix33 mt = Matrix33::FromRows(ca,cb,cd);
-	std::cout << mt << std::endl;
-	float area = mt.Determinant();
+    	Matrix33 mt = Matrix33::FromRows(ca,cb,n);
+    	std::cout << mt << std::endl;
+    	float area = mt.Determinant() / 2.f;
 	
-	std::cout << "Volume: " << area << std::endl;
+    	std::cout << "Area: " << area << std::endl;
 	
-	return 0;
-}
+    	return false;
+    }
+};
+
+TEST(TriangleArea, "trianglearea");
+
+class ParallelepipedVolume : public Test
+{
+    bool Init()
+    {
+    	Vector3 a(1,0,0);
+    	Vector3 b(0,1,0);
+    	Vector3 c(0,0,0);
+    	Vector3 d(0,0,1);
+	
+    	Vector3 ca = a-c;
+    	Vector3 cb = b-c;
+    	Vector3 cd = d-c;
+	
+    	Matrix33 mt = Matrix33::FromRows(ca,cb,cd);
+    	std::cout << mt << std::endl;
+    	float area = mt.Determinant();
+	
+    	std::cout << "Volume: " << area << std::endl;
+	
+    	return false;
+    }
+};
+TEST(ParallelepipedVolume, "parallelepiped");

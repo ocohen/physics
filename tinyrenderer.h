@@ -21,9 +21,10 @@ public:
     void DrawSolidTriangle(const float * a, const float * b, const float * c, const float * colour);
     //tris is just an index buffer, but we treat it as triangles (num indices = numTris * 3)
     void DrawMesh(const float * vertices, const int * tris, int numTris, int stride=3, const float * colour = 0, bool solid=true, float thickness =1.f);
+    void DrawSphere(const float * center, float radius, int numSections=16, const float * colour = 0, float thickness=1.f);
     void SetCameraPosition(const float * eye);
     void SetCameraLookAt(const float * eye, const float * target, const float * up);
-    void SetCameraLense(float angleFOV);
+    void SetCameraLense(float angleFOV, float near=1.f, float far=1000.f);
     void SetDimensions(float width, float height);
     void Flush();
 private:
@@ -150,6 +151,48 @@ inline void Renderer::DrawMesh(const float * vertices, const int * tris, int num
     }
 }
 
+inline void Renderer::DrawSphere(const float * center, float radius, int numSections, const float * colour, float thickness)
+{
+    SetColour(colour);
+    float a[3];
+    float b[3];
+    
+    float rads = 2.f*3.14159/numSections;
+    float unit = 1.f/numSections;
+    
+    for(int i=0; i<numSections; i++)
+    {
+        float offset = radius*unit*i*2 - radius;
+        float r = sqrt(radius*radius - offset*offset);
+        for(int j=0; j<numSections; j++)
+        {
+            a[0] = center[0] + r * cos(rads*j);
+            a[1] = center[1] + offset;
+            a[2] = center[2] + r * sin(rads*j);
+        
+            b[0] = center[0] + r * cos(rads*(j+1));
+            b[1] = center[1] + offset;
+            b[2] = center[2] + r * sin(rads*(j+1));
+        
+            DrawLine(a,b,colour,thickness);
+        }
+        
+        for(int j=0; j<numSections; j++)
+        {
+            a[0] = center[0] + offset;
+            a[1] = center[1] + r * cos(rads*j);
+            a[2] = center[2] + r * sin(rads*j);
+        
+            b[0] = center[0] + offset;
+            b[1] = center[1] + r * cos(rads*(j+1));
+            b[2] = center[2] + r * sin(rads*(j+1));
+        
+            DrawLine(a,b,colour,thickness);
+        }
+        
+    }
+}
+
 inline void Renderer::Flush()
 {
     glFlush();
@@ -229,10 +272,8 @@ inline float anglesToRadians(float angle)
     return 3.14159 * angle / 180.f;
 }
 
-inline void Renderer::SetCameraLense(float angleFOV)
+inline void Renderer::SetCameraLense(float angleFOV, float near, float far)
 {
-    const float near = 1.f;
-    const float far = 100.f;
     const float ratio = (width > 0.f && height > 0.f) ? width / height : 1.f;
     const float size = tanf(anglesToRadians(angleFOV) / 2.f);
     
